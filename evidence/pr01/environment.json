@@ -1,0 +1,10 @@
+{
+  "runtime": "native",
+  "os": "Ubuntu 24.04",
+  "ros_distribution": "jazzy",
+  "rmw": "latest=7.3.4, local=7.3.3",
+  "domains": {
+    "normal": 16,
+    "broken": 17
+  }
+}

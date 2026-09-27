@@ -1,22 +1,12 @@
-# Декларация использования ИИ
+## PR01
 
-Файл обязателен для каждой ПР. Замените PRNN номером текущей работы и выберите
-один вариант ниже. Для следующих ПР добавляйте разделы, сохраняя предыдущие.
+AI tools were used during PR01 to:
 
-## PRNN
+- AI used: yes
+- Model and version: Chat GPT 5.6 sol
+- Explain the task requirements;
+- Help configure ROS 2 Jazzy on Ubuntu 24.04;
+- Explain `ROS_DOMAIN_ID` and the communication failure experiment;
+- Help prepare `report.json`, `graph.md`, and other evidence files;
 
-### Если ИИ использовался
-
-- Использован ИИ: да (`ai_used: true` в отчёте этой ПР).
-- Модель и версия:
-- Среда или интерфейс агента:
-- Затронутые компоненты:
-- Характер помощи:
-- Как результат был проверен независимо:
-
-### Если ИИ не использовался
-
-ИИ не использовался (`ai_used: false` в отчёте этой ПР).
-
-Полные чаты и личные промпты не прикладываются. Не включайте ключи, секреты,
-персональные данные и hidden tests.
+All commands were executed and verified manually by the student.

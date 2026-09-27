@@ -1,17 +1,21 @@
 {
   "schema_version": 1,
   "practice_id": "PR01",
-  "commit": "replace-with-implementation-commit",
+  "commit": "72b2ad9884939a407be10b847ea97b3d9f9cb783",
   "course_kit": {
     "version": "v1-w03",
     "archive_sha256": "7fbfd3e8161ab6c6ebefc7663efdaf77d9a7d490399743507f33dcefbd5ac522"
   },
-  "commands": ["replace-with-executed-command"],
-  "tests": [{"name": "replace-with-test-name", "status": "passed"}],
+  "commands": [
+   "ros2 node list --no-daemon --spin-time 2",
+   "ros2 topic list -t",
+   "ros2 topic echo /turtle1/pose --once",
+   "timeout 5s ros2 topic echo /turtle1/pose turtlesim/msg/Pose --once"],
+  "tests": [{"name": "ROS graph visible in same domain", "status": "passed"}],
   "defect": {
-    "reproducer": "Команда и наблюдаемый симптом до исправления",
-    "root_cause": "Причинное объяснение",
-    "proof_after": "Команда и результат после исправления"
+    "reproducer": "Set turtlesim to ROS_DOMAIN_ID=16 and observer to ROS_DOMAIN_ID=17; /turtle1/pose is not received and timeout exits with code 124.",
+    "root_cause": "ROS 2 nodes in different ROS_DOMAIN_ID values do not discover each other.",
+    "proof_after": "Return observer and teleop to ROS_DOMAIN_ID=16; /turtle1/pose is received and timeout exits with code 0."
   },
   "claims": {
     "public_tests_passed": true,
@@ -19,9 +23,9 @@
     "defect_fixed": true
   },
   "time": {
-    "contact_academic_hours": "0",
-    "self_study_hours": "0"
+    "contact_academic_hours": 0,
+    "self_study_hours": 0
   },
-  "ai_used": false
+  "ai_used": true
 }
 

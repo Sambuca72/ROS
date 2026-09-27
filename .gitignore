@@ -1,4 +1,20 @@
 .course-kit/
 robotics-course-kit-*.tar.gz
 robotics-course-kit-*.sha256.txt
-AI_USAGE.md
+
+# ROS / colcon generated files
+build/
+install/
+log/
+
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Temporary editor and OS files
+*.swp
+*.swo
+*~
+*.tmp
+.DS_Store
