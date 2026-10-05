@@ -1,0 +1,26 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/src/patrol
+plugins: ament-lint-0.17.5, ament-pep257-0.17.5, ament-flake8-0.17.5, launch-testing-3.4.11, ament-xmllint-0.17.5, ament-copyright-0.17.5, launch-testing-ros-0.26.12, cov-4.1.0, colcon-core-0.21.3
+collecting ... collected 6 items
+
+src/patrol/test/test_command.py::test_no_pose_means_zero_command PASSED  [ 16%]
+src/patrol/test/test_command.py::test_received_pose_means_patrol_command PASSED [ 33%]
+src/patrol/test/test_command.py::test_commands_do_not_share_mutable_state PASSED [ 50%]
+src/patrol/test/test_copyright.py::test_copyright PASSED                 [ 66%]
+src/patrol/test/test_flake8.py::test_flake8 PASSED                       [ 83%]
+src/patrol/test/test_pep257.py::test_pep257 PASSED                       [100%]
+
+============================== 6 passed in 0.78s ===============================
+
+Build: colcon build --symlink-install --packages-select turtle_bringup patrol
+Starting >>> patrol
+Starting >>> turtle_bringup
+Finished <<< patrol [2.05s]
+Finished <<< turtle_bringup [2.05s]
+
+Summary: 2 packages finished [2.28s]
+
+Official checker: python3 .course-kit/v1/tools/check_practice.py PR03 --submission .
+PR03: контракт evidence выполнен

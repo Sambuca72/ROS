@@ -26,3 +26,16 @@ AI tools were used during PR02 to:
 All commands and results were executed and checked manually by the student.
 
 ---
+
+## PR03
+
+- Model and version: Chat GPT 5.6 sol
+- clarify the practice requirements;
+- explain ROS 2 concepts and commands;
+- help analyze errors and terminal output;
+- assist with preparing evidence files and the final report;
+- help verify that the practice matched the course requirements.
+- help write the repository "patrol"
+
+All commands and results were executed and checked manually by the student.
+---

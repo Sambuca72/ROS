@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "practice_id": "PR03",
+  "commit": "e8c0586e57dabd9a2593b2b8940839a53f492f76",
+  "course_kit": {
+    "version": "v1-w03",
+    "archive_sha256": "7fbfd3e8161ab6c6ebefc7663efdaf77d9a7d490399743507f33dcefbd5ac522"
+  },
+  "commands": [
+    "source /opt/ros/jazzy/setup.bash",
+    "ros2 pkg create --build-type ament_python --node-name patrol --license Apache-2.0 patrol --dependencies rclpy geometry_msgs turtlesim (from src)",
+    "colcon build --symlink-install --packages-select patrol",
+    "colcon build --symlink-install --packages-select turtle_bringup patrol",
+    "source install/setup.bash",
+    "python3 -m pytest src/patrol/test -v",
+    "ros2 pkg executables patrol",
+    "ROS_DOMAIN_ID=16 ros2 run patrol patrol",
+    "ROS_DOMAIN_ID=16 QT_QPA_PLATFORM=offscreen ros2 run turtlesim turtlesim_node",
+    "ros2 node list --no-daemon --spin-time 2",
+    "ros2 node info /patrol --no-daemon --spin-time 3",
+    "ros2 topic type /turtle1/pose --no-daemon --spin-time 3",
+    "ros2 topic info /cmd_vel --verbose --no-daemon --spin-time 3",
+    "ros2 topic info /turtle1/cmd_vel --verbose --no-daemon --spin-time 3",
+    "ROS_DOMAIN_ID=16 ros2 run patrol patrol --ros-args -r cmd_vel:=/turtle1/cmd_vel",
+    "ros2 topic hz /turtle1/cmd_vel (stopped with SIGINT after a 10-second observation window)",
+    "SIGINT to patrol; observe pose until both velocities become zero, then verify stability for 1 second",
+    "python3 .course-kit/v1/tools/check_practice.py PR03 --submission ."
+  ],
+  "tests": [
+    {
+      "name": "colcon build and installed executable discovery",
+      "status": "passed",
+      "evidence": "evidence/pr03/tests.txt"
+    },
+    {
+      "name": "No pose gives zero Twist; received pose gives only the required speeds; returned messages are independent",
+      "status": "passed",
+      "evidence": "evidence/pr03/tests.txt"
+    },
+    {
+      "name": "ament copyright, flake8 and pep257",
+      "status": "passed",
+      "evidence": "evidence/pr03/tests.txt"
+    },
+    {
+      "name": "Real timer sends zero before turtlesim starts",
+      "status": "passed",
+      "evidence": "evidence/pr03/demo.md"
+    },
+    {
+      "name": "Wrong topic has no turtle subscriber and pose does not change",
+      "status": "passed",
+      "evidence": "evidence/pr03/demo.md"
+    },
+    {
+      "name": "Remap connects patrol to turtlesim and measured pose changes",
+      "status": "passed",
+      "evidence": "evidence/pr03/demo.md"
+    },
+    {
+      "name": "Real command frequency measured for 10 seconds",
+      "status": "passed",
+      "evidence": "evidence/pr03/demo.md"
+    },
+    {
+      "name": "After SIGINT turtle eventually stops and no more commands arrive",
+      "status": "passed",
+      "evidence": "evidence/pr03/demo.md"
+    },
+    {
+      "name": "Official PR03 evidence checker",
+      "status": "passed",
+      "evidence": "evidence/pr03/tests.txt"
+    },
+    {
+      "name": "Remote GitHub Actions run",
+      "status": "skipped",
+      "reason": "No push performed; verify the remote Actions run for the evidence commit after push."
+    }
+  ],
+  "defect": {
+    "reproducer": "Run patrol without remap. /cmd_vel has 1 publisher and 0 subscribers; /turtle1/cmd_vel has 0 publishers and 1 turtlesim subscriber. After the first pose patrol publishes linear.x=0.5 and angular.z=0.3, but two pose snapshots 1.5 seconds apart are identical.",
+    "root_cause": "Relative cmd_vel resolves to /cmd_vel in the root namespace; turtlesim listens to the different fully qualified name /turtle1/cmd_vel. Type, QoS, ROS domain and command values are unchanged.",
+    "proof_after": "Restart only patrol with --ros-args -r cmd_vel:=/turtle1/cmd_vel. The corrected topic has 1 patrol publisher and 1 turtlesim subscriber; pose velocities are 0.5 and approximately 0.3. 100 command samples arrive in a 10-second window (10.0 Hz); the CLI estimate is 10.001 Hz. After SIGINT the observed stop takes 0.974 seconds."
+  },
+  "claims": {
+    "public_tests_passed": true,
+    "defect_reproduced": true,
+    "defect_fixed": true
+  },
+  "time": {
+    "contact_academic_hours": 2,
+    "self_study_hours": 2
+  },
+  "time_basis": "Assignment workload estimate: one laboratory pair and approximately two self-study hours. These are planned values, not measured student or agent execution time; update them with actual student time before submission if required.",
+  "ai_used": true
+}
