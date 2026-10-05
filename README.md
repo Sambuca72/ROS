@@ -70,7 +70,6 @@ ros2 topic echo /turtle1/pose --once
 - [Отчёт](evidence/pr02/report.json)
 - [Первоначальная сборка](evidence/pr02/build-empty.txt)
 - [Итоговая сборка](evidence/pr02/build.txt)
-- [Использование ИИ](AI_USAGE.md)
 
 Локальная проверка:
 
@@ -81,5 +80,72 @@ python3 .course-kit/v1/tools/check_practice.py PR02 --submission .
 
 [GitHub Actions](.github/workflows/ci.yml) собирает пакет без GUI, проверяет
 установку launch-файла и evidence с закреплённым course-kit `v1-w03`.
-Результаты запуска
-CI можно получить только после push.
+
+## PR03 — своя нода: поза и команда
+
+Пакет `patrol` для ROS 2 Jazzy хранит последнюю позу из `/turtle1/pose`.
+Таймер каждые 0,1 секунды публикует `Twist` в относительный `cmd_vel`.
+До первой позы команда нулевая; после — `linear.x=0.5`, `angular.z=0.3`.
+Выбор команды вынесен в чистую функцию `command_for_pose`.
+
+Сборка и тесты из корня workspace:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install --packages-select turtle_bringup patrol
+source install/setup.bash
+python3 -m pytest src/patrol/test -v
+```
+
+В каждом терминале перед запуском:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+source install/setup.bash
+export ROS_DOMAIN_ID=16
+```
+
+Терминал A — симулятор:
+
+```bash
+ros2 launch turtle_bringup sim.launch.py
+```
+
+Терминал B — правильный запуск:
+
+```bash
+ros2 run patrol patrol --ros-args -r cmd_vel:=/turtle1/cmd_vel
+```
+
+Для воспроизведения дефекта остановите patrol в B через Ctrl+C и запустите
+`ros2 run patrol patrol` без remap. Черепашка остановится: `/cmd_vel`
+не совпадает с `/turtle1/cmd_vel`. Затем остановите эту ноду и верните remap.
+Не запускайте teleop или второй patrol одновременно.
+
+Терминал C — граф и реальная частота:
+
+```bash
+ros2 node info /patrol --no-daemon --spin-time 3
+ros2 topic info /turtle1/cmd_vel --verbose --no-daemon --spin-time 3
+timeout --signal=INT 10s ros2 topic hz /turtle1/cmd_vel
+```
+
+`timeout` завершает измерение через 10 секунд; код выхода 124 здесь ожидаем.
+После Ctrl+C у patrol дождитесь нулевых скоростей в `/turtle1/pose`,
+затем остановите симулятор в A. Завершение процесса не отправляет торможение.
+
+Материалы ПР03:
+
+- [Описание опыта и объяснение ROS](evidence/pr03/demo.md)
+- [Результаты тестов](evidence/pr03/tests.txt)
+- [Отчёт](evidence/pr03/report.json)
+
+Проверка сдачи:
+
+```bash
+python3 .course-kit/v1/tools/check_practice.py PR03 --submission .
+```
+
+CI собирает оба пакета, проверяет тесты `patrol` и отчёт ПР03.
+Отчёт ПР02 проверяется на его коммите сдачи, поскольку после него
+в репозитории появилась реализация следующей практики.
