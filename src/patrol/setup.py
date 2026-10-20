@@ -29,7 +29,7 @@ setup(
     zip_safe=True,
     maintainer='Sambuca72',
     maintainer_email='Sambuca72@users.noreply.github.com',
-    description='Receive turtlesim poses and publish timed patrol commands for PR03.',
+    description='Publish turtlesim motion with validated dynamic parameters for PR04.',
     license='Apache-2.0',
     extras_require={
         'test': [

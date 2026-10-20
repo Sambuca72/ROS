@@ -15,13 +15,14 @@
 """Select a command without creating a node or accessing ROS state."""
 
 from geometry_msgs.msg import Twist
+from patrol.settings import Settings
 from turtlesim.msg import Pose
 
 
-def command_for_pose(pose: Pose | None) -> Twist:
-    """Return zero until a pose arrives, then a constant curved motion."""
+def command_for_pose(pose: Pose | None, settings: Settings = Settings()) -> Twist:
+    """Return zero until a pose arrives, then motion using the active settings."""
     command = Twist()
     if pose is not None:
-        command.linear.x = 0.5
-        command.angular.z = 0.3
+        command.linear.x = settings.linear_speed
+        command.angular.z = settings.turn_rate
     return command

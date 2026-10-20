@@ -16,6 +16,7 @@
 
 from geometry_msgs.msg import Twist
 from patrol.command import command_for_pose
+from patrol.settings import Settings
 from turtlesim.msg import Pose
 
 
@@ -40,3 +41,13 @@ def test_commands_do_not_share_mutable_state():
     command.linear.x = 99.0
     assert command_for_pose(Pose()).linear.x == 0.5
     assert command_for_pose(None) == Twist()
+
+
+def test_active_speeds_control_command():
+    """Use the accepted speed settings while preserving zero before a pose."""
+    settings = Settings(linear_speed=0.8, turn_rate=-0.4, publish_hz=5.0)
+    expected = Twist()
+    expected.linear.x = 0.8
+    expected.angular.z = -0.4
+    assert command_for_pose(Pose(), settings) == expected
+    assert command_for_pose(None, settings) == Twist()

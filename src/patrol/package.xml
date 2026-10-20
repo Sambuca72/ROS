@@ -3,11 +3,12 @@
 <package format="3">
   <name>patrol</name>
   <version>0.0.0</version>
-  <description>Receive turtlesim poses and publish timed patrol commands for PR03.</description>
+  <description>Publish turtlesim motion with validated dynamic parameters for PR04.</description>
   <maintainer email="Sambuca72@users.noreply.github.com">Sambuca72</maintainer>
   <license>Apache-2.0</license>
 
   <depend>rclpy</depend>
+  <depend>rcl_interfaces</depend>
   <depend>geometry_msgs</depend>
   <depend>turtlesim</depend>
 

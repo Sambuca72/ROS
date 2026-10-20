@@ -146,6 +146,64 @@ timeout --signal=INT 10s ros2 topic hz /turtle1/cmd_vel
 python3 .course-kit/v1/tools/check_practice.py PR03 --submission .
 ```
 
-CI собирает оба пакета, проверяет тесты `patrol` и отчёт ПР03.
-Отчёт ПР02 проверяется на его коммите сдачи, поскольку после него
-в репозитории появилась реализация следующей практики.
+CI собирает оба пакета и проверяет текущие тесты `patrol`.
+Отчёты предыдущих практик проверяются на их коммитах сдачи, поскольку
+после них в репозитории появилась реализация следующей практики.
+
+
+## PR04 — динамические параметры движения
+
+Продолжение `patrol` из ПР03: параметры `linear_speed` (0–1 м/с),
+`turn_rate` (−1–1 рад/с) и `publish_hz` (1–30 Гц) можно менять без
+перезапуска. Значения по умолчанию: `0.5`, `0.3`, `10.0`. Все значения
+должны быть конечными числами. До первой позы команда по-прежнему нулевая.
+
+Сборка и тесты:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install --packages-select turtle_bringup patrol
+source install/setup.bash
+python3 -m pytest src/patrol/test -v
+```
+
+В двух терминалах с подключёнными ROS и `install/setup.bash`, доменом `16`:
+
+```bash
+# A
+ros2 launch turtle_bringup sim.launch.py
+# B
+ros2 run patrol patrol --ros-args -r cmd_vel:=/turtle1/cmd_vel
+```
+
+В третьем терминале с тем же окружением:
+
+```bash
+ros2 param set /patrol publish_hz 5.0
+ros2 param set /patrol publish_hz 0.0
+ros2 param get /patrol publish_hz
+ros2 topic hz /turtle1/cmd_vel
+ros2 param set /patrol linear_speed 0.8
+ros2 param set /patrol turn_rate -0.4
+ros2 service call /clear std_srvs/srv/Empty '{}'
+ros2 action list -t
+```
+
+`0.0` отклоняется: параметр остаётся `5.0`, поток — около 5 Гц.
+Проверка кандидата не меняет состояние; post-set callback применяет
+принятые значения, отменяет и удаляет старый таймер при смене частоты.
+
+- [Параметры, дефект и реальные измерения](evidence/pr04/parameters.md)
+- [Вывод сборки и тестов](evidence/pr04/tests.txt)
+- [Отчёт ПР04](evidence/pr04/report.json)
+- [Использование ИИ](AI_USAGE.md)
+
+Для ПР04 нужен course-kit с манифестом PR04; использован закреплённый
+`v1-w07` с проверенной SHA256 (ссылка и хеш в CI и отчёте).
+
+```bash
+python3 .course-kit/v1/tools/check_practice.py PR04 --submission .
+```
+
+ПР02 и ПР03 сохраняют свои исторические отчёты; CI проверяет их
+на соответствующих коммитах с прежним course-kit `v1-w03`.
