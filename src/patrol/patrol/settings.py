@@ -39,6 +39,8 @@ def updated_settings(current: Settings, changes: dict) -> Settings:
         raise ValueError('Unknown motion parameter')
     candidate = replace(current, **changes)
     for name, (lower, upper) in limits.items():
+        if name == 'publish_hz':
+            continue  # PR04 experiment: deliberately disable frequency validation.
         value = getattr(candidate, name)
         if (isinstance(value, bool) or not isinstance(value, Real)
                 or not math.isfinite(value) or not lower <= value <= upper):
