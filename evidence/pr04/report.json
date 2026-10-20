@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "practice_id": "PR04",
+  "commit": "054cbe59e7d1f049a3d7b7a09695084e4e747e8f",
+  "course_kit": {
+    "version": "v1-w07",
+    "archive_sha256": "9b7fdd5424d3d97e47d51dbe23064934585e62135dc2902844dd679529bda929"
+  },
+  "commands": [
+    "source /opt/ros/jazzy/setup.bash",
+    "colcon build --symlink-install --packages-select turtle_bringup patrol",
+    "source install/setup.bash",
+    "ROS_DOMAIN_ID=18 ROS_LOG_DIR=/tmp/pr04-final-logs python3 -m pytest src/patrol/test -v",
+    "ros2 pkg executables patrol",
+    "ROS_DOMAIN_ID=16 ros2 run patrol patrol --ros-args -r cmd_vel:=/turtle1/cmd_vel",
+    "ROS_DOMAIN_ID=16 QT_QPA_PLATFORM=offscreen ros2 run turtlesim turtlesim_node",
+    "ros2 topic type /turtle1/pose --no-daemon --spin-time 2",
+    "ros2 param get /patrol linear_speed",
+    "ros2 param get /patrol turn_rate",
+    "ros2 param get /patrol publish_hz",
+    "ros2 topic hz /turtle1/cmd_vel (SIGINT after 6 seconds at each stage)",
+    "ros2 param set /patrol publish_hz 5.0",
+    "ros2 param set /patrol publish_hz 0.0",
+    "ros2 param get /patrol publish_hz",
+    "ros2 param set /patrol linear_speed 0.8",
+    "ros2 param set /patrol turn_rate -0.4",
+    "ros2 service call /clear std_srvs/srv/Empty '{}'",
+    "ros2 action list -t",
+    "Defect worktree: ROS_DOMAIN_ID=17 PYTHONPATH=/tmp/ros-pr04-defect/src/patrol:$PYTHONPATH python3 -m pytest 'src/patrol/test/test_parameters.py::test_invalid_frequency_preserves_state[0.0]' -v",
+    "Defect worktree: ROS_DOMAIN_ID=17 PYTHONPATH=/tmp/ros-pr04-defect/src/patrol:$PYTHONPATH python3 -m patrol.patrol (then ros2 param set /patrol publish_hz 0.0 in another process in domain 17)",
+    "python3 .course-kit/v1/tools/check_practice.py PR04 --submission ."
+  ],
+  "tests": [
+    {
+      "name": "Build and installed patrol executable",
+      "status": "passed",
+      "evidence": "evidence/pr04/tests.txt"
+    },
+    {
+      "name": "40 pytest tests: pure limits, nonfinite values, commands, ROS parameter transactions, timer ownership and package style",
+      "status": "passed",
+      "evidence": "evidence/pr04/tests.txt"
+    },
+    {
+      "name": "Deliberately broken commit: unchanged zero-frequency regression fails with ZeroDivisionError; real node exits 1",
+      "status": "passed",
+      "evidence": "evidence/pr04/tests.txt",
+      "note": "The regression failure is expected on the defect revision only."
+    },
+    {
+      "name": "Live stream 10 to 5 Hz, rejected zero preserves 5 Hz and parameter value, accepted speed and turn affect turtle pose",
+      "status": "passed",
+      "evidence": "evidence/pr04/parameters.md"
+    },
+    {
+      "name": "Real /clear service response and rotate_absolute action discovery",
+      "status": "passed",
+      "evidence": "evidence/pr04/parameters.md"
+    },
+    {
+      "name": "Official PR04 evidence checker",
+      "status": "passed",
+      "evidence": "evidence/pr04/tests.txt"
+    },
+    {
+      "name": "Historical PR02 and PR03 evidence contracts with legacy kit",
+      "status": "passed",
+      "evidence": "evidence/pr04/tests.txt"
+    },
+    {
+      "name": "Remote GitHub Actions",
+      "status": "skipped",
+      "reason": "No push performed; the submission still needs a successful remote CI run."
+    }
+  ],
+  "defect": {
+    "reproducer": "Commit b05bb9188db07bd76f83cbf988f5423469fff2b9, branch pr04-defect: frequency validation is skipped. Run python3 -m patrol.patrol and ros2 param set /patrol publish_hz 0.0 in domain 17. The same zero-frequency test fails, and the real node crashes with ZeroDivisionError and exit code 1; no new commands in a fresh 1-second window.",
+    "root_cause": "Unchecked zero is accepted before the post-set callback cancels the old timer and evaluates 1.0 / publish_hz. Division by zero destroys the running stream.",
+    "proof_after": "Validation restored before any parameter, timer or active-state change. CLI rejects 0.0; get still returns 5.0. Measured 30 commands in 6 seconds before and after rejection. All 40 tests pass, including the unchanged zero-frequency regression."
+  },
+  "measurements": {
+    "default": {
+      "count": 60,
+      "window_seconds": 6,
+      "interval_hz": 9.999710316864595
+    },
+    "changed": {
+      "count": 30,
+      "window_seconds": 6,
+      "interval_hz": 5.000350206422934
+    },
+    "rejected_zero": {
+      "count": 30,
+      "window_seconds": 6,
+      "interval_hz": 4.999630287683449
+    }
+  },
+  "claims": {
+    "public_tests_passed": true,
+    "defect_reproduced": true,
+    "defect_fixed": true
+  },
+  "time": {
+    "contact_academic_hours": 2,
+    "self_study_hours": 2
+  },
+  "time_basis": "Assignment workload estimate only: one laboratory pair and approximately two self-study hours. Not measured student time; replace with actual student time if required.",
+  "ai_used": true
+}
