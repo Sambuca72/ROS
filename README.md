@@ -207,3 +207,91 @@ python3 .course-kit/v1/tools/check_practice.py PR04 --submission .
 
 ПР02 и ПР03 сохраняют свои исторические отчёты; CI проверяет их
 на соответствующих коммитах с прежним course-kit `v1-w03`.
+
+## PR05 — launch, QoS и повтор записи
+
+`course_bringup` запускает один глобальный turtlesim и три ноды в
+`/robot_a`: patrol, ретранслятор позы и подписчик сенсорного потока.
+`pose_relay` передаёт позу без изменений с `best_effort`. Все имена
+топиков внутри нод относительные; launch связывает вход позы и выход
+команд с глобальными `/turtle1/pose` и `/turtle1/cmd_vel`.
+
+Из корня репозитория:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install --packages-select turtle_bringup patrol course_bringup
+source install/setup.bash
+export ROS_DOMAIN_ID=16
+export ROS_LOG_DIR=/tmp/ros-pr05-logs
+```
+
+В каждом дополнительном терминале подключите оба `setup.bash` и задайте
+тот же домен. Для запуска без окна можно задать `QT_QPA_PLATFORM=offscreen`.
+
+1. В терминале A воспроизведите несовместимость без записи:
+
+   ```bash
+   ros2 launch course_bringup patrol.launch.py namespace:=robot_a \
+     subscriber_reliability:=reliable record:=false
+   ```
+
+   В B топик виден, но `echo` завершается по таймауту с кодом 124:
+
+   ```bash
+   ros2 topic info /robot_a/sensor_pose --verbose
+   timeout --signal=INT 4s ros2 topic echo /robot_a/sensor_pose \
+     --qos-reliability reliable --once
+   ```
+
+2. Остановите A через Ctrl+C и запустите совместимый профиль с записью:
+
+   ```bash
+   ros2 launch course_bringup patrol.launch.py namespace:=robot_a \
+     subscriber_reliability:=best_effort record:=true \
+     bag_dir:=/tmp/pr05-new-bag
+   ```
+
+   В B проверьте доставку, затем остановите A через Ctrl+C:
+
+   ```bash
+   ros2 topic echo /robot_a/sensor_pose --qos-reliability best_effort --once
+   ```
+
+   Каталог `bag_dir` должен быть новым. По умолчанию запись выключена;
+   при `record:=false` процесс recorder не создаётся (`IfCondition`).
+
+3. При остановленной живой системе воспроизведите сохранённый bag:
+
+   ```bash
+   ros2 bag info /tmp/pr05-new-bag
+   ros2 bag play /tmp/pr05-new-bag --loop \
+     --qos-profile-overrides-path config/qos-overrides.yaml
+   ```
+
+   В B повторите оба `echo`: `reliable` снова даёт таймаут, а
+   `best_effort` получает координаты. `--loop` позволяет успеть выполнить
+   обе проверки на одной короткой записи; завершение — Ctrl+C.
+   MCAP хранится локально и в сдачу не включается. Сохранённая запись
+   выполненного опыта находится в игнорируемом `.local/pr05/bag`.
+
+Проверка тестов и контракта сдачи:
+
+```bash
+colcon test --event-handlers console_direct+
+colcon test-result --verbose
+python3 .course-kit/v1/tools/check_practice.py PR05 --submission .
+```
+
+42 теста `patrol` включают две проверки реальной DDS-доставки: независимый
+`best_effort`-наблюдатель получает неизменённую позу в обоих опытах,
+а тестируемый подписчик — только с совместимым QoS.
+Два интеграционных теста `course_bringup` проверяют запуск с обоими
+значениями `record`, другой namespace, содержимое MCAP и завершение
+всех процессов после SIGINT.
+
+- [Диагностика несовместимости](evidence/pr05/qos-before.txt)
+- [Исправление, запись и обе проверки replay](evidence/pr05/qos-after.txt)
+- [Метаданные MCAP](evidence/pr05/bag-metadata.yaml)
+- [Сборка и тесты — в конце диагностики](evidence/pr05/qos-after.txt)
+- [Отчёт](evidence/pr05/report.json)

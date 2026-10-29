@@ -28,18 +28,23 @@ jobs:
         shell: bash
         run: |
           source /opt/ros/jazzy/setup.bash
-          colcon build --symlink-install --packages-select turtle_bringup patrol
+          colcon build --symlink-install --packages-select turtle_bringup patrol course_bringup
           source install/setup.bash
           test -f "$(ros2 pkg prefix turtle_bringup)/share/turtle_bringup/launch/sim.launch.py"
           python3 -m py_compile src/turtle_bringup/launch/sim.launch.py
+          test -f "$(ros2 pkg prefix course_bringup)/share/course_bringup/launch/patrol.launch.py"
+          ros2 launch course_bringup patrol.launch.py --show-args
 
-      - name: Test PR04 parameters, command selection and package style
+      - name: Test parameters, sensor QoS, full launch and package style
         shell: bash
         run: |
           source /opt/ros/jazzy/setup.bash
           source install/setup.bash
-          python3 -m pytest src/patrol/test -v
+          colcon test --event-handlers console_direct+
+          colcon test-result --verbose
           ros2 pkg executables patrol | grep -Fx 'patrol patrol'
+          ros2 pkg executables patrol | grep -Fx 'patrol pose_relay'
+          ros2 pkg executables patrol | grep -Fx 'patrol pose_subscriber'
 
       - name: Validate PR01 environment JSON
         shell: bash
@@ -68,6 +73,12 @@ jobs:
           git worktree add --detach /tmp/pr03-submission "$(git log -1 --format=%H -- evidence/pr03/report.json)"
           python3 .course-kit/legacy/v1/tools/check_practice.py PR03 --submission /tmp/pr03-submission
 
-      - name: Check PR04 evidence
+      - name: Check PR04 evidence at its submission commit
         shell: bash
-        run: python3 .course-kit/v1/tools/check_practice.py PR04 --submission .
+        run: |
+          git worktree add --detach /tmp/pr04-submission "$(git log -1 --format=%H -- evidence/pr04/report.json)"
+          python3 .course-kit/v1/tools/check_practice.py PR04 --submission /tmp/pr04-submission
+
+      - name: Check PR05 evidence
+        shell: bash
+        run: python3 .course-kit/v1/tools/check_practice.py PR05 --submission .

@@ -1,4 +1,5 @@
 .course-kit/
+.local/pr05/
 robotics-course-kit-*.tar.gz
 robotics-course-kit-*.sha256.txt
 

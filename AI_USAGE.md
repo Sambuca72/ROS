@@ -55,3 +55,20 @@ AI tools were used during PR04 to:
 - update CI and verify the official course-kit evidence contract.
 
 All commands and results were executed and checked manually by the student.
+
+
+---
+
+## PR05
+
+AI tools were used during PR05 to:
+
+- Model: Сhat GPT 6.1 sol
+- clarify launch arguments, namespaces, remapping and QoS compatibility;
+- add `course_bringup`, `pose_relay` and a configurable sensor subscriber;
+- write DDS delivery tests and run the existing PR04 regression tests;
+- reproduce the reliability mismatch on live data and MCAP replay;
+- prepare evidence, the report, launch instructions and CI updates.
+
+Commands and results were checked locally through ROS package tests,
+live ROS processes, recorded metadata and replay of the same MCAP file.
