@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "practice_id": "PR05",
+  "commit": "c76e42f6814629d05e49983a835fafc3a96f1ea0",
+  "course_kit": {
+    "version": "v1-w07",
+    "archive_sha256": "9b7fdd5424d3d97e47d51dbe23064934585e62135dc2902844dd679529bda929"
+  },
+  "commands": [
+    "source /opt/ros/jazzy/setup.bash",
+    "colcon build --symlink-install --packages-select turtle_bringup patrol course_bringup",
+    "source install/setup.bash",
+    "ROS_DOMAIN_ID=18 ROS_LOG_DIR=/tmp/ros-pr05-tests colcon test --packages-select patrol --event-handlers console_direct+",
+    "colcon test-result --test-result-base build/patrol --verbose",
+    "ROS_DOMAIN_ID=18 ROS_LOG_DIR=/tmp/ros-pr05-tests colcon test --event-handlers console_direct+",
+    "colcon test-result --verbose",
+    "ros2 launch course_bringup patrol.launch.py --show-args",
+    "export ROS_DOMAIN_ID=16 ROS_LOG_DIR=/tmp/ros-pr05-experiment QT_QPA_PLATFORM=offscreen",
+    "ros2 launch course_bringup patrol.launch.py namespace:=robot_a subscriber_reliability:=reliable record:=false bag_dir:=/tmp/pr05-record-disabled",
+    "ros2 node list --no-daemon --spin-time 2",
+    "ros2 topic list --no-daemon --spin-time 2",
+    "ros2 topic info /robot_a/sensor_pose --verbose --no-daemon --spin-time 2",
+    "timeout --signal=INT 4s ros2 topic echo /robot_a/sensor_pose --qos-reliability reliable --once",
+    "ros2 launch course_bringup patrol.launch.py namespace:=robot_a subscriber_reliability:=best_effort record:=true bag_dir:=evidence/pr05/bag",
+    "ros2 topic echo /robot_a/sensor_pose --qos-reliability best_effort --once",
+    "ros2 topic echo /turtle1/cmd_vel --once",
+    "ros2 bag info evidence/pr05/bag",
+    "ros2 bag play evidence/pr05/bag --loop --qos-profile-overrides-path config/qos-overrides.yaml",
+    "During replay, repeat the reliable timeout, best_effort echo and topic info commands above with the live launch stopped",
+    "Read every stored pose with rosbag2_py.SequentialReader and rclpy.serialization.deserialize_message",
+    "python3 .course-kit/v1/tools/check_practice.py PR05 --submission ."
+  ],
+  "tests": [
+    {
+      "name": "Build three packages and inspect installed launch arguments and executables",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "42 package tests, including both DDS reliability profiles and PR04 parameter regressions",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "course_bringup flake8 and pep257 checks",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "Live reliable mismatch with an active independent best_effort observer; record=false starts no recorder",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-before.txt"
+    },
+    {
+      "name": "Compatible live delivery, movement, command remapping and launch-controlled MCAP recording",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "One recording reproduces reliable timeout and best_effort delivery with the live launch stopped",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "Every stored MCAP message deserializes; exactly one topic; metadata copy matches",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "Full colcon test: 46 passed, one pre-existing skipped turtle_bringup copyright check",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "Two installed-launch integration tests: record false/true, custom namespaces, MCAP contents and clean shutdown",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "PR02, PR03 and PR04 evidence contracts at their original submission commits",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    },
+    {
+      "name": "Remote GitHub Actions",
+      "status": "skipped",
+      "reason": "Local work completed on branch pr05; no push performed yet."
+    },
+    {
+      "name": "Official PR05 evidence checker",
+      "status": "passed",
+      "evidence": "evidence/pr05/qos-after.txt"
+    }
+  ],
+  "defect": {
+    "reproducer": "Launch with subscriber_reliability:=reliable and record:=false. Topic discovery succeeds, but reliable echo times out with exit code 124. An independent best_effort observer simultaneously receives poses.",
+    "root_cause": "pose_relay offers BEST_EFFORT reliability. A subscriber requesting RELIABLE cannot match that publisher. Discovery still lists both endpoints; their RELIABILITY policies are incompatible.",
+    "proof_after": "Restart with subscriber_reliability:=best_effort and record:=true. The actual subscriber logs its first pose, CLI echo succeeds and patrol moves the turtle. Stop the live launch and replay that one MCAP with the best_effort override: reliable still times out, best_effort receives poses, and no live motion commands are published."
+  },
+  "claims": {
+    "public_tests_passed": true,
+    "defect_reproduced": true,
+    "defect_fixed": true,
+    "replay_verified": true
+  },
+  "time": {
+    "contact_academic_hours": 2,
+    "self_study_hours": 2
+  },
+  "time_basis": "Assignment workload estimate: one laboratory pair and approximately two self-study hours. Actual student time was not measured.",
+  "ai_used": true,
+  "measurements": {
+    "bag": {
+      "topic": "/robot_a/sensor_pose",
+      "message_count": 569,
+      "moving_pose_count": 561,
+      "duration_seconds": 8.982333381,
+      "mcap_sha256": "a65f204c457cbd8cc598c378765e378e9ed5c6906d8987115b693f9ba25e05de"
+    },
+    "live_before": {
+      "best_effort_received": 196,
+      "reliable_received": 0
+    },
+    "live_after": {
+      "best_effort_received": 225,
+      "reliable_received": 0,
+      "motion_commands": 29
+    },
+    "replay": {
+      "best_effort_received": 224,
+      "reliable_received": 0,
+      "motion_commands": 0
+    }
+  },
+  "recording_location": "The commands and logs retain the original experiment path evidence/pr05/bag. After verification the unchanged MCAP recording was moved to ignored .local/pr05/bag; only its metadata is submitted."
+}

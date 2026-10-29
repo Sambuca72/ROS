@@ -1,0 +1,461 @@
+ROS 2 Jazzy; ROS_DOMAIN_ID=16; QT_QPA_PLATFORM=offscreen
+
+LIVE: compatible QoS and MCAP recording
+$ ros2 launch course_bringup patrol.launch.py namespace:=robot_a subscriber_reliability:=best_effort record:=true bag_dir:=evidence/pr05/bag
+
+$ ros2 node list --no-daemon --spin-time 2
+/pr05_monitor
+/robot_a/patrol
+/robot_a/pose_relay
+/robot_a/pose_subscriber
+/rosbag2_recorder
+/turtlesim
+Exit code: 0
+
+$ ros2 topic info /robot_a/sensor_pose --verbose --no-daemon --spin-time 2
+Type: turtlesim/msg/Pose
+
+Publisher count: 1
+
+Node name: pose_relay
+Node namespace: /robot_a
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: PUBLISHER
+GID: 01.0f.b7.bd.c5.de.a2.e3.00.00.00.00.00.00.13.03
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 4
+
+Node name: pr05_monitor
+Node namespace: /
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.0b.de.6c.98.00.00.00.00.00.00.13.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: pr05_monitor
+Node namespace: /
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.0b.de.6c.98.00.00.00.00.00.00.14.04
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: pose_subscriber
+Node namespace: /robot_a
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.c6.de.9c.f4.00.00.00.00.00.00.13.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: rosbag2_recorder
+Node namespace: /
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.c7.de.0c.a2.00.00.00.00.00.00.26.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Exit code: 0
+
+$ ros2 topic echo /robot_a/sensor_pose --qos-reliability best_effort --once
+x: 7.042923927307129
+y: 7.932453155517578
+theta: 2.0160000324249268
+linear_velocity: 0.5
+angular_velocity: 0.30000001192092896
+---
+Exit code: 0
+
+$ ros2 topic echo /turtle1/cmd_vel --once
+linear:
+  x: 0.5
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.3
+---
+Exit code: 0
+
+Live monitor: best_effort=225, reliable=0, motion commands=29
+PASS: compatible delivery, moving turtle and remapped motion output.
+
+Launch log:
+[INFO] [launch]: All log files can be found below /tmp/ros-pr05-experiment/2026-10-29-22-06-31-043708-Yung-amadey-57024
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [launch.user]: Patrol namespace: robot_a; subscriber reliability: best_effort
+[INFO] [launch.user]: MCAP recording: true; directory: evidence/pr05/bag
+[INFO] [turtlesim_node-1]: process started with pid [57027]
+[INFO] [patrol-2]: process started with pid [57028]
+[INFO] [pose_relay-3]: process started with pid [57029]
+[INFO] [pose_subscriber-4]: process started with pid [57030]
+[INFO] [ros2-5]: process started with pid [57031]
+[turtlesim_node-1] [INFO] [1793286391.146192901] [turtlesim]: Starting turtlesim with node name /turtlesim
+[turtlesim_node-1] [INFO] [1793286391.150384937] [turtlesim]: Spawning turtle [turtle1] at x=[5.544445], y=[5.544445], theta=[0.000000]
+[pose_subscriber-4] [INFO] [1793286391.359555228] [robot_a.pose_subscriber]: Subscribing to sensor_pose: best_effort
+[ros2-5] stdin is not a terminal device. Keyboard handling disabled.[INFO] [1793286391.394974737] [rosbag2_recorder]: Press SPACE for pausing/resuming
+[ros2-5] [INFO] [1793286391.394994739] [rosbag2_recorder]: Event publisher thread: Started
+[ros2-5] [INFO] [1793286391.398596492] [rosbag2_recorder]: Starting recording to 'evidence/pr05/bag'
+[ros2-5] [INFO] [1793286391.399728236] [rosbag2_recorder]: Listening for topics...
+[ros2-5] [INFO] [1793286391.399742696] [rosbag2_recorder]: Recording...
+[ros2-5] [INFO] [1793286391.399768760] [rosbag2_recorder]: Topics discovery started.
+[pose_relay-3] [WARN] [1793286391.431593230] [robot_a.pose_relay]: New subscription discovered on topic 'sensor_pose', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY
+[ros2-5] [INFO] [1793286391.450597042] [rosbag2_recorder]: Subscribed to topic '/robot_a/sensor_pose'
+[ros2-5] [INFO] [1793286391.450643559] [rosbag2_recorder]: All requested topics are subscribed. Stopping discovery...
+[ros2-5] [INFO] [1793286391.450649431] [rosbag2_recorder]: Topics discovery stopped.
+[pose_subscriber-4] [INFO] [1793286391.457567791] [robot_a.pose_subscriber]: First sensor_pose received: x=5.544, y=5.544
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [ros2-5]: sending signal 'SIGINT' to process[ros2-5]
+[INFO] [pose_subscriber-4]: sending signal 'SIGINT' to process[pose_subscriber-4]
+[INFO] [pose_relay-3]: sending signal 'SIGINT' to process[pose_relay-3]
+[INFO] [patrol-2]: sending signal 'SIGINT' to process[patrol-2]
+[INFO] [turtlesim_node-1]: sending signal 'SIGINT' to process[turtlesim_node-1]
+[ros2-5] [INFO] [1793286400.441863753] [rosbag2_recorder]: Pausing recording.
+[ros2-5] [INFO] [1793286400.441911973] [rosbag2_cpp]: Writing remaining messages from cache to the bag. It may take a while
+[turtlesim_node-1] [INFO] [1793286400.443273563] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[ros2-5] [INFO] [1793286400.443867692] [rosbag2_recorder]: Recording stopped
+[ros2-5] [INFO] [1793286400.444461922] [rosbag2_recorder]: Event publisher thread: Exited
+[INFO] [turtlesim_node-1]: process has finished cleanly [pid 57027]
+[INFO] [pose_relay-3]: process has finished cleanly [pid 57029]
+[INFO] [ros2-5]: process has finished cleanly [pid 57031]
+[INFO] [patrol-2]: process has finished cleanly [pid 57028]
+[INFO] [pose_subscriber-4]: process has finished cleanly [pid 57030]
+
+Recording metadata:
+$ ros2 bag info evidence/pr05/bag
+
+Files:             bag_0.mcap
+Bag size:          44.1 KiB
+Storage id:        mcap
+ROS Distro:        jazzy
+Duration:          8.982333381s
+Start:             Oct 29 2026 22:06:31.456703757 (1793286391.456703757)
+End:               Oct 29 2026 22:06:40.439037138 (1793286400.439037138)
+Messages:          569
+Topic information: Topic: /robot_a/sensor_pose | Type: turtlesim/msg/Pose | Count: 569 | Serialization Format: cdr
+Service:           0
+Service information:
+Exit code: 0
+
+
+REPLAY: same MCAP file; live launch stopped
+$ ros2 bag play evidence/pr05/bag --loop --qos-profile-overrides-path config/qos-overrides.yaml
+
+$ ros2 node list --no-daemon --spin-time 2
+/pr05_monitor
+/rosbag2_player
+Exit code: 0
+
+$ ros2 topic info /robot_a/sensor_pose --verbose --no-daemon --spin-time 2
+Type: turtlesim/msg/Pose
+
+Publisher count: 1
+
+Node name: rosbag2_player
+Node namespace: /
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: PUBLISHER
+GID: 01.0f.b7.bd.92.df.18.be.00.00.00.00.00.00.14.03
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 2
+
+Node name: pr05_monitor
+Node namespace: /
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.0b.de.6c.98.00.00.00.00.00.00.13.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: pr05_monitor
+Node namespace: /
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.0b.de.6c.98.00.00.00.00.00.00.14.04
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Exit code: 0
+
+$ timeout --signal=INT 4s ros2 topic echo /robot_a/sensor_pose --qos-reliability reliable --once
+[WARN] [1793286408.054432251] [_ros2cli_57288]: New publisher discovered on topic '/robot_a/sensor_pose', offering incompatible QoS. No messages will be received from it. Last incompatible policy: RELIABILITY
+Exit code: 124
+
+$ ros2 topic echo /robot_a/sensor_pose --qos-reliability best_effort --once
+x: 6.3766655921936035
+y: 5.769401550292969
+theta: 0.5231999754905701
+linear_velocity: 0.5
+angular_velocity: 0.30000001192092896
+---
+Exit code: 0
+
+Replay monitor: best_effort=224, reliable=0, motion commands=0
+PASS: both QoS profiles checked against the same recording, with no live publisher.
+
+Replay log:
+stdin is not a terminal device. Keyboard handling disabled.[INFO] [1793286401.249130745] [rosbag2_player]: Set rate to 1
+[INFO] [1793286401.249218458] [rosbag2_player]: Overriding QoS profile for topic /robot_a/sensor_pose
+[INFO] [1793286401.253613503] [rosbag2_player]: Adding keyboard callbacks.
+[INFO] [1793286401.253643205] [rosbag2_player]: Press SPACE for Pause/Resume
+[INFO] [1793286401.253650751] [rosbag2_player]: Press CURSOR_RIGHT for Play Next Message
+[INFO] [1793286401.253655410] [rosbag2_player]: Press CURSOR_UP for Increase Rate 10%
+[INFO] [1793286401.253659699] [rosbag2_player]: Press CURSOR_DOWN for Decrease Rate 10%
+[INFO] [1793286401.254839088] [rosbag2_player]: Playback until timestamp: -1
+[WARN] [1793286401.353841376] [rosbag2_player]: New subscription discovered on topic '/robot_a/sensor_pose', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY_QOS_POLICY
+[WARN] [1793286408.040769484] [rosbag2_player]: New subscription discovered on topic '/robot_a/sensor_pose', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY_QOS_POLICY
+[INFO] [1793286413.370138975] [rosbag2_player]: Stopping playback.
+
+
+BUILD, PACKAGE TESTS AND EVIDENCE VALIDATION
+
+$ source /opt/ros/jazzy/setup.bash
+$ colcon build --symlink-install --packages-select turtle_bringup patrol course_bringup
+
+Package: turtle_bringup
+running develop
+running egg_info
+writing turtle_bringup.egg-info/PKG-INFO
+writing dependency_links to turtle_bringup.egg-info/dependency_links.txt
+writing requirements to turtle_bringup.egg-info/requires.txt
+writing top-level names to turtle_bringup.egg-info/top_level.txt
+reading manifest file 'turtle_bringup.egg-info/SOURCES.txt'
+writing manifest file 'turtle_bringup.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/bottega_boy/Documents/5_semak/ROS/pratice_1/install/turtle_bringup/lib/python3.12/site-packages/turtle-bringup.egg-link (link to .)
+
+Installed /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/turtle_bringup
+running symlink_data
+
+Package: patrol
+running develop
+running egg_info
+writing patrol.egg-info/PKG-INFO
+writing dependency_links to patrol.egg-info/dependency_links.txt
+writing entry points to patrol.egg-info/entry_points.txt
+writing requirements to patrol.egg-info/requires.txt
+writing top-level names to patrol.egg-info/top_level.txt
+reading manifest file 'patrol.egg-info/SOURCES.txt'
+writing manifest file 'patrol.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/bottega_boy/Documents/5_semak/ROS/pratice_1/install/patrol/lib/python3.12/site-packages/patrol.egg-link (link to .)
+Installing patrol script to /home/bottega_boy/Documents/5_semak/ROS/pratice_1/install/patrol/lib/patrol
+Installing pose_relay script to /home/bottega_boy/Documents/5_semak/ROS/pratice_1/install/patrol/lib/patrol
+Installing pose_subscriber script to /home/bottega_boy/Documents/5_semak/ROS/pratice_1/install/patrol/lib/patrol
+
+Installed /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/patrol
+running symlink_data
+
+Package: course_bringup
+running develop
+running egg_info
+writing course_bringup.egg-info/PKG-INFO
+writing dependency_links to course_bringup.egg-info/dependency_links.txt
+writing requirements to course_bringup.egg-info/requires.txt
+writing top-level names to course_bringup.egg-info/top_level.txt
+reading manifest file 'course_bringup.egg-info/SOURCES.txt'
+adding license file 'LICENSE'
+writing manifest file 'course_bringup.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/bottega_boy/Documents/5_semak/ROS/pratice_1/install/course_bringup/lib/python3.12/site-packages/course-bringup.egg-link (link to .)
+
+Installed /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/course_bringup
+running symlink_data
+
+$ source install/setup.bash
+$ ROS_DOMAIN_ID=18 ROS_LOG_DIR=/tmp/ros-pr05-tests colcon test --event-handlers console_direct+
+
+Package: turtle_bringup
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+cachedir: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/turtle_bringup/.pytest_cache
+rootdir: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/src/turtle_bringup
+plugins: ament-lint-0.17.5, ament-pep257-0.17.5, ament-flake8-0.17.5, launch-testing-3.4.11, ament-xmllint-0.17.5, ament-copyright-0.17.5, launch-testing-ros-0.26.12, cov-4.1.0, colcon-core-0.21.3
+collected 3 items
+
+test/test_copyright.py s                                                 [ 33%]
+test/test_flake8.py .                                                    [ 66%]
+test/test_pep257.py .                                                    [100%]
+
+- generated xml file: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/turtle_bringup/pytest.xml -
+========================= 2 passed, 1 skipped in 0.16s =========================
+
+Package: patrol
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+cachedir: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/patrol/.pytest_cache
+rootdir: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/src/patrol
+plugins: ament-lint-0.17.5, ament-pep257-0.17.5, ament-flake8-0.17.5, launch-testing-3.4.11, ament-xmllint-0.17.5, ament-copyright-0.17.5, launch-testing-ros-0.26.12, cov-4.1.0, colcon-core-0.21.3
+collected 42 items
+
+test/test_command.py ....                                                [  9%]
+test/test_copyright.py .                                                 [ 11%]
+test/test_flake8.py .                                                    [ 14%]
+test/test_parameters.py ..........                                       [ 38%]
+test/test_pep257.py .                                                    [ 40%]
+test/test_sensor_qos.py ..                                               [ 45%]
+
+=============================== warnings summary ===============================
+test/test_flake8.py: 16 warnings
+  Warning: This process (pid=57816) is multi-threaded, use of fork() may lead to deadlocks in the child.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+test/test_settings.py .......................                            [100%]
+- generated xml file: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/patrol/pytest.xml -
+======================= 42 passed, 16 warnings in 6.93s ========================
+
+Package: course_bringup
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-7.4.4, pluggy-1.4.0
+cachedir: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/course_bringup/.pytest_cache
+rootdir: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/src/course_bringup
+plugins: ament-lint-0.17.5, ament-pep257-0.17.5, ament-flake8-0.17.5, launch-testing-3.4.11, ament-xmllint-0.17.5, ament-copyright-0.17.5, launch-testing-ros-0.26.12, cov-4.1.0, colcon-core-0.21.3
+collected 2 items
+
+test/test_launch.py ..                                                   [100%]
+
+- generated xml file: /home/bottega_boy/Documents/5_semak/ROS/pratice_1/build/course_bringup/pytest.xml -
+============================== 2 passed in 2.36s ===============================
+
+
+$ python3 .course-kit/legacy/v1/tools/check_practice.py PR02 --submission /tmp/pr05-history-pr02-_k4hzjm8
+PR02: контракт evidence выполнен
+
+$ python3 .course-kit/legacy/v1/tools/check_practice.py PR03 --submission /tmp/pr05-history-pr03-i_lah1zy
+PR03: контракт evidence выполнен
+
+$ python3 .course-kit/v1/tools/check_practice.py PR04 --submission /tmp/pr05-history-pr04-vx7u1kpo
+PR04: контракт evidence выполнен
+Summary: 47 tests, 0 errors, 0 failures, 1 skipped
+
+$ course_bringup flake8 and pep257 via ament Python APIs
+
+4 files checked
+No problems found
+
+Checked files:
+
+* src/course_bringup/setup.py
+* src/course_bringup/test/test_launch.py
+* src/course_bringup/course_bringup/__init__.py
+* src/course_bringup/launch/patrol.launch.py
+
+checking src/course_bringup/course_bringup/__init__.py
+checking src/course_bringup/launch/patrol.launch.py
+checking src/course_bringup/setup.py
+checking src/course_bringup/test/test_launch.py
+No problems found
+Arguments (pass arguments as '<name>:=<value>'):
+
+    'namespace':
+        Namespace for the patrol and sensor nodes
+        (default: 'robot_a')
+
+    'record':
+        Start the MCAP recorder when true. Valid choices are: ['true', 'false']
+        (default: 'false')
+
+    'bag_dir':
+        New output directory for the recording
+        (default: 'evidence/pr05/bag')
+
+    'subscriber_reliability':
+        Reliability requested by the sensor subscriber. Valid choices are: ['reliable', 'best_effort']
+        (default: 'best_effort')
+patrol patrol
+patrol pose_relay
+patrol pose_subscriber
+
+$ Verify every MCAP message with rosbag2_py and deserialize_message
+PASS: 569 valid poses; 561 moving poses; exactly one topic; 562 distinct positions; metadata copy matches.
+{
+  "bag": {
+    "topic": "/robot_a/sensor_pose",
+    "message_count": 569,
+    "moving_pose_count": 561,
+    "duration_seconds": 8.982333381,
+    "mcap_sha256": "a65f204c457cbd8cc598c378765e378e9ed5c6906d8987115b693f9ba25e05de"
+  },
+  "live_before": {
+    "best_effort_received": 196,
+    "reliable_received": 0
+  },
+  "live_after": {
+    "best_effort_received": 225,
+    "reliable_received": 0,
+    "motion_commands": 29
+  },
+  "replay": {
+    "best_effort_received": 224,
+    "reliable_received": 0,
+    "motion_commands": 0
+  }
+}
+{
+  "errors": [],
+  "practice_id": "PR05",
+  "status": "passed"
+}

@@ -1,0 +1,125 @@
+ROS 2 Jazzy; ROS_DOMAIN_ID=16; QT_QPA_PLATFORM=offscreen
+
+LIVE: incompatible QoS
+$ ros2 launch course_bringup patrol.launch.py namespace:=robot_a subscriber_reliability:=reliable record:=false bag_dir:=/tmp/pr05-record-disabled
+
+$ ros2 node list --no-daemon --spin-time 2
+/pr05_monitor
+/robot_a/patrol
+/robot_a/pose_relay
+/robot_a/pose_subscriber
+/turtlesim
+Exit code: 0
+
+$ ros2 topic list --no-daemon --spin-time 2
+/parameter_events
+/robot_a/sensor_pose
+/rosout
+/turtle1/cmd_vel
+/turtle1/color_sensor
+/turtle1/pose
+Exit code: 0
+
+$ ros2 topic info /robot_a/sensor_pose --verbose --no-daemon --spin-time 2
+Type: turtlesim/msg/Pose
+
+Publisher count: 1
+
+Node name: pose_relay
+Node namespace: /robot_a
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: PUBLISHER
+GID: 01.0f.b7.bd.32.de.20.7a.00.00.00.00.00.00.13.03
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 3
+
+Node name: pr05_monitor
+Node namespace: /
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.0b.de.6c.98.00.00.00.00.00.00.13.04
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: pr05_monitor
+Node namespace: /
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.0b.de.6c.98.00.00.00.00.00.00.14.04
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: pose_subscriber
+Node namespace: /robot_a
+Topic type: turtlesim/msg/Pose
+Topic type hash: RIHS01_739beba26bcba6920404ba722b7b8321348512f92ea5be235c47251940dd8aa9
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.b7.bd.33.de.be.25.00.00.00.00.00.00.13.04
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Exit code: 0
+
+$ timeout --signal=INT 4s ros2 topic echo /robot_a/sensor_pose --qos-reliability reliable --once
+[WARN] [1793286386.194615133] [_ros2cli_56991]: New publisher discovered on topic '/robot_a/sensor_pose', offering incompatible QoS. No messages will be received from it. Last incompatible policy: RELIABILITY
+Exit code: 124
+
+Independent monitor: best_effort=196, reliable=0
+PASS: topic is visible and active; reliable delivery is zero.
+PASS: record=false created neither a recorder node nor the output directory.
+
+Launch log:
+[INFO] [launch]: All log files can be found below /tmp/ros-pr05-experiment/2026-10-29-22-06-17-048717-Yung-amadey-56877
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [launch.user]: Patrol namespace: robot_a; subscriber reliability: reliable
+[INFO] [launch.user]: MCAP recording: false; directory: /tmp/pr05-record-disabled
+[INFO] [turtlesim_node-1]: process started with pid [56880]
+[INFO] [patrol-2]: process started with pid [56881]
+[INFO] [pose_relay-3]: process started with pid [56882]
+[INFO] [pose_subscriber-4]: process started with pid [56883]
+[turtlesim_node-1] [INFO] [1793286377.152680065] [turtlesim]: Starting turtlesim with node name /turtlesim
+[turtlesim_node-1] [INFO] [1793286377.157415190] [turtlesim]: Spawning turtle [turtle1] at x=[5.544445], y=[5.544445], theta=[0.000000]
+[pose_subscriber-4] [INFO] [1793286377.387441232] [robot_a.pose_subscriber]: Subscribing to sensor_pose: reliable
+[pose_relay-3] [WARN] [1793286377.453551524] [robot_a.pose_relay]: New subscription discovered on topic 'sensor_pose', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY
+[pose_subscriber-4] [WARN] [1793286377.481542618] [robot_a.pose_subscriber]: New publisher discovered on topic 'sensor_pose', offering incompatible QoS. No messages will be received from it. Last incompatible policy: RELIABILITY
+[pose_relay-3] [WARN] [1793286377.611569119] [robot_a.pose_relay]: New subscription discovered on topic 'sensor_pose', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY
+[pose_relay-3] [WARN] [1793286386.182462144] [robot_a.pose_relay]: New subscription discovered on topic 'sensor_pose', requesting incompatible QoS. No messages will be sent to it. Last incompatible policy: RELIABILITY
+[WARNING] [launch]: user interrupted with ctrl-c (SIGINT)
+[INFO] [pose_subscriber-4]: sending signal 'SIGINT' to process[pose_subscriber-4]
+[INFO] [pose_relay-3]: sending signal 'SIGINT' to process[pose_relay-3]
+[INFO] [patrol-2]: sending signal 'SIGINT' to process[patrol-2]
+[INFO] [turtlesim_node-1]: sending signal 'SIGINT' to process[turtlesim_node-1]
+[turtlesim_node-1] [INFO] [1793286390.518562460] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[INFO] [turtlesim_node-1]: process has finished cleanly [pid 56880]
+[INFO] [patrol-2]: process has finished cleanly [pid 56881]
+[INFO] [pose_subscriber-4]: process has finished cleanly [pid 56883]
+[INFO] [pose_relay-3]: process has finished cleanly [pid 56882]
